@@ -11,8 +11,9 @@ const users = [
     }
 ];
 
-const getHandler = function(req, res) {
+const getHandler = function(req, res, next) {
     res.json(users);
+    next();
 };
 
 const createHandler = function(req, res) {
