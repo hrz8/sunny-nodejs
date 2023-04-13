@@ -2,18 +2,15 @@
   "name": "test",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "server.js",
   "author": "",
   "license": "ISC",
   "scripts": {
-    "dev": "nodemon main.js",
-    "start": "node main.js",
-    "test": "ls -la"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "dependencies": {
-    "chalk": "^5.2.0",
-    "express": "^4.18.2",
-    "lodash": "^4.17.21"
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
