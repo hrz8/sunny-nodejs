@@ -2,18 +2,7 @@ const http = require('http');
 
 const express = require('express');
 
-const PORT = 4000;
-
-async function bodyParser(req) {
-    const buffers = [];
-    for await (const chunk of req) {
-        buffers.push(chunk);
-    }
-
-    const data = Buffer.concat(buffers).toString();
-    const body = JSON.parse(data);
-    return body;
-}
+const PORT_EXPRESS = 4001;
 
 // ENDPOINTS
 // GET: /users -> untuk melihat semua users
@@ -45,51 +34,47 @@ const users = [
     }
 ];
 
-http.createServer(async function(request, response) {
-    if (request.url === '/api/v1/users' && request.method === 'POST') {
-        // ngambil data "request"
-        // tambah data "db"
-        // balikin - no content
-        const requestJson = await bodyParser(request);
-        users.push(requestJson);
-        response.writeHead(204);
-        response.end();
-    } else if (request.url.startsWith('/api/v1/users/') && request.method === 'PUT') {
-        // ngambil data "request"
-        // ngambil data "db" (sesuai "request")
-        // update data "db" (sesuai "request")
-        const requestJson = await bodyParser(request);
-        const id = request.url.split('/')[2];
-        const userIdx = users.findIndex((user) => user.id == id);
-        if (userIdx < 0) {
-            response.writeHead(404);
-            response.end();
-            return;
-        }
-        users[userIdx] = {
-            id: Number(id),
-            name: requestJson.name,
-            age: requestJson.age,
-        };
-        response.writeHead(204);
-        response.end();
-    } else if (request.url.startsWith('/api/v1/users/') && request.method === 'DELETE') {
-        const id = request.url.split('/')[2];
-        const userIdx = users.findIndex((user) => user.id == id);
-        if (userIdx < 0) {
-            response.writeHead(404);
-            response.end();
-            return;
-        }
-        users.splice(userIdx, 1);
-        // users.shift();
-        response.writeHead(204);
-        response.end();
-    } else {
-        response.writeHead(404);
-        response.write('not found');
-        response.end();
+const app = express();
+
+app.use(express.json());
+
+app.get('/api/v1/users', function(req, res) {
+    res.json(users);
+});
+
+app.post('/api/v1/users', function(req, res) {
+    const requestJson = req.body;
+    users.push(requestJson);
+    res.status(204).send();
+});
+
+app.put('/api/v1/users/:id', function(req, res) {
+    const requestJson = req.body;
+    const { id } = req.params;
+    const userIdx = users.findIndex((user) => user.id == id);
+    if (userIdx < 0) {
+        res.status(404).send();
+        return;
     }
-}).listen(PORT);
+    users[userIdx] = {
+        id: Number(id),
+        name: requestJson.name,
+        age: requestJson.age,
+    };
+    res.status(204).send();
+});
+
+app.delete('/api/v1/users/:id', function(req, res) {
+    const { id } = req.params;
+    const userIdx = users.findIndex((user) => user.id == id);
+    if (userIdx < 0) {
+        res.status(404).send();
+        return;
+    }
+    users.splice(userIdx, 1);
+    res.status(204).send();
+});
+
+app.listen(PORT_EXPRESS);
 
 console.log('selesai');
