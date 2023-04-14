@@ -16,10 +16,14 @@ const getHandler = function(req, res, next) {
     next();
 };
 
-const createHandler = function(req, res) {
+const createHandler = function(req, res, next) {
     const requestJson = req.body;
+    // if (typeof requestJson.name !== 'string') {
+    //     throw new Error('validation error');
+    // }
     users.push(requestJson);
     res.status(204).send();
+    next();
 };
 
 const updateHandler = function(req, res) {
