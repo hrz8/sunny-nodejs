@@ -23,7 +23,6 @@ const createHandler = function(req, res, next) {
     // }
     users.push(requestJson);
     res.status(204).send();
-    next();
 };
 
 const updateHandler = function(req, res) {
